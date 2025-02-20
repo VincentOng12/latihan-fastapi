@@ -1,13 +1,21 @@
+import os
 import logging
-from logging.config import dictConfig
+from logging.handlers import TimedRotatingFileHandler
+from datetime import datetime
 
+# Pastikan folder logs ada
+LOG_DIR = "logs"
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
+# Format waktu untuk nama file log per hari
+log_filename = os.path.join(LOG_DIR, f"app-{datetime.now().strftime('%Y-%m-%d')}.log")
+
+# Konfigurasi Logging
 LOGGING_CONFIG = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "default": {
-            "format": "[%(asctime)s] %(levelname)s - %(name)s - %(message)s",
-        },
         "detailed": {
             "format": "[%(asctime)s] %(levelname)s - %(name)s - %(filename)s:%(lineno)d - %(message)s",
         }
@@ -15,11 +23,15 @@ LOGGING_CONFIG = {
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
-            "formatter": "default",
+            "formatter": "detailed",
         },
         "file": {
-            "class": "logging.FileHandler",
-            "filename": "app.log",
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "filename": log_filename,
+            "when": "midnight",  # Rotasi log setiap tengah malam
+            "interval": 1,
+            "backupCount": 7,  # Simpan log hanya untuk 7 hari terakhir
+            "encoding": "utf-8",
             "formatter": "detailed",
         }
     },
@@ -37,9 +49,12 @@ LOGGING_CONFIG = {
     }
 }
 
+# Fungsi untuk setup logging
 def setup_logging():
-    dictConfig(LOGGING_CONFIG)
+    logging.config.dictConfig(LOGGING_CONFIG)
 
+# Panggil setup_logging saat file di-import
 setup_logging()
 
+# Logger utama aplikasi
 logger = logging.getLogger("app")
