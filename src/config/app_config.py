@@ -12,6 +12,7 @@ load_dotenv(env_file)
 class Settings(BaseSettings):
     APP_ENV: str = os.getenv("APP_ENV")
     DATABASE_URL: str = os.getenv("DATABASE_URL")
+    DATABASE_URL_SYNC: str = os.getenv("DATABASE_URL_SYNC") # for alembic
     APP_NAME: str = os.getenv("APP_NAME")
     DEBUG: bool = os.getenv("DEBUG") == "True"
 
