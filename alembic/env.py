@@ -16,6 +16,7 @@ from src.models import Base
 # access to the values within the .ini file in use.
 config = context.config
 
+# overwrite db url to use from config.
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL_SYNC)
 
 # Interpret the config file for Python logging.
